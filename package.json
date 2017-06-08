@@ -1,12 +1,17 @@
 {
-  "name": "typescript-starter",
+  "name": "minibench",
   "version": "0.0.1",
-  "description": "typescript boilerplate project",
+  "description": "Minimal benchmark library for nodejs",
   "main": "dist/index.js",
   "author": "Marvin Hagemeister <marvin@marvinhagemeister.de>",
   "license": "MIT",
+  "typings": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:marvinhagemeister/minibench.git"
+  },
   "scripts": {
-    "clean": "rimraf dist/",
+    "cleanup": "rimraf dist/",
     "lint": "tslint 'src/**/*.ts'",
     "watch": "tsc -w",
     "build": "npm run clean && tsc",
@@ -15,10 +20,15 @@
     "coverage": "nyc npm t",
     "prepublish": "npm run lint && npm t && npm run build"
   },
-  "dependencies": {},
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "performance-now": "^2.1.0"
+  },
   "devDependencies": {
     "@types/chai": "^4.0.0",
+    "@types/chalk": "^0.4.31",
     "@types/mocha": "^2.2.41",
+    "@types/node": "^7.0.29",
     "chai": "^4.0.2",
     "mocha": "^3.3.0",
     "nyc": "^11.0.2",
