@@ -1,3 +1,23 @@
-# TypeScript Starter
+# MiniBench
 
-Slim Boilerplate for TypeScript based projects.
+Minimal benchmark library for nodejs.
+
+## Installation
+
+```bash
+# npm
+npm install --dev  minibench
+
+# yarn
+yarn add --dev minibench
+```
+
+## Usage
+
+```js
+new Benchmark()
+  .add("test1", () => foo())
+  .add("test2", () => bar())
+  .run()
+  .print(console.log);
+```
