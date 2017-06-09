@@ -14,7 +14,7 @@
     "cleanup": "rimraf dist/",
     "lint": "tslint 'src/**/*.ts'",
     "watch": "tsc -w",
-    "build": "npm run clean && tsc",
+    "build": "npm run cleanup && tsc",
     "test": "mocha --compilers ts:ts-node/register 'src/**/__tests__/*.spec.ts'",
     "test-watch": "npm t -- -w -R min",
     "coverage": "nyc npm t",
