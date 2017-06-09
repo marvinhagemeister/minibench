@@ -45,7 +45,7 @@ export default class Benchmark {
 
       let start = 0;
       p.then(() => (start = now()));
-      runs.map(run => p.then(() => test.f.call(null)));
+      runs.forEach(run => p.then(() => test.f.call(null)));
       p.then(() => {
         const time = now() - start;
 
