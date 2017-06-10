@@ -15,9 +15,14 @@ yarn add --dev minibench
 ## Usage
 
 ```js
-new Benchmark()
+// optional options
+const options {
+  iterations: 1000,
+  logger: console.log,
+};
+
+new Benchmark(options) // options are optional
   .add("test1", () => foo())
   .add("test2", () => bar())
   .run()
-  .print(console.log);
 ```

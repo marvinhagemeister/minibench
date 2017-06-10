@@ -13,13 +13,24 @@ export interface Result {
   displayTime: string;
 }
 
+export interface Options {
+  iterations: number;
+  logger: (str: string) => void;
+}
+
+const defaultOptions: Options = {
+  iterations: 1000,
+  logger: console.log,
+};
+
 export default class Benchmark {
   cases: Case[] = [];
   results: Result[] = [];
   iter: number;
+  logger: (str: string) => void;
 
-  constructor(iter: number = 1000) {
-    this.iter = iter;
+  constructor(options: Partial<Options> = defaultOptions) {
+    Object.assign(this, defaultOptions, options);
   }
 
   add(name: string, f: () => any) {
@@ -27,7 +38,7 @@ export default class Benchmark {
     return this;
   }
 
-  async run(iterations: number = 1000): Promise<Benchmark> {
+  async run(iterations: number = 1000): Promise<Result[]> {
     // Warmup
     for (let i = 0; i < 10; i++) {
       for (const item of this.cases) {
@@ -58,10 +69,11 @@ export default class Benchmark {
     }
 
     await p;
-    return this;
+    this.print(this.logger);
+    return this.results;
   }
 
-  print(logger: (msg?: string) => any) {
+  private print(logger: (msg?: string) => any) {
     logger();
 
     this.results.map(res =>
