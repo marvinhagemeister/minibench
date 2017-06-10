@@ -1,5 +1,9 @@
 # Changelog
 
-## 1.0.0
+## 0.0.2
 
-- initial Release
+- Simplify user-facing api
+
+## 0.0.1
+
+- initial pre-release

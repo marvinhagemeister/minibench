@@ -1,6 +1,6 @@
 {
   "name": "minibench",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Minimal benchmark library for nodejs",
   "main": "dist/index.js",
   "author": "Marvin Hagemeister <marvin@marvinhagemeister.de>",
