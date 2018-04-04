@@ -1,91 +1,84 @@
-/* tslint:disable:ban-types curly no-var-requires */
-import * as chalk from "chalk";
-const now = require("performance-now");
+import { gray, yellow } from "@marvinh/minichalk";
+import { performance } from "perf_hooks";
 
-export interface Case {
-  f: () => any;
-  name: string;
+async function loop(fn: () => void, time: number) {
+  const start = performance.now();
+  let count = 0;
+
+  while (performance.now() - start < time) {
+    count++;
+    await fn();
+  }
+
+  return count;
 }
 
 export interface Result {
   name: string;
-  time: number;
-  displayTime: string;
-}
-
-export interface Options {
   iterations: number;
-  logger: (str: string) => void;
+  noops: number;
+  count: number;
+  time: number;
+  ticks: number;
+  hz: number;
 }
 
-const defaultOptions: Options = {
-  iterations: 1000,
-  logger: console.log,
-};
-
-export default class Benchmark {
-  cases: Case[] = [];
-  results: Result[] = [];
-  iter: number;
-  logger: (str: string) => void;
-
-  constructor(options: Partial<Options> = defaultOptions) {
-    Object.assign(this, defaultOptions, options);
+export async function benchmark(name: string, fn: () => void): Promise<Result> {
+  let a = 0;
+  function noop() {
+    try {
+      a++;
+    } finally {
+      a += Math.random();
+    }
   }
 
-  add(name: string, f: () => any) {
-    this.cases.push({ name, f });
-    return this;
-  }
+  // warmup
+  for (let i = 100; i--; ) noop(), await fn();
 
-  async run(iterations: number = 1000): Promise<Result[]> {
-    // Warmup
-    for (let i = 0; i < 10; i++) {
-      for (const item of this.cases) {
-        item.f();
-      }
+  const count = 2;
+  const time = 500;
+  let passes = 0;
+  const noops = await loop(noop, time);
+  let iterations = 0;
+
+  return new Promise<Result>(resolve => {
+    async function next() {
+      iterations += await loop(fn, time);
+      setTimeout(++passes === count ? done : next, 10);
     }
 
-    const p = Promise.resolve();
-
-    for (const test of this.cases) {
-      const runs = [];
-      for (let i = 0; i < this.iter; i++) {
-        runs.push(true);
-      }
-
-      let start = 0;
-      p.then(() => (start = now()));
-      runs.forEach(run => p.then(() => test.f.call(null)));
-      p.then(() => {
-        const time = now() - start;
-
-        this.results.push({
-          name: test.name,
-          time,
-          displayTime: time.toFixed(5) + " ms",
-        });
+    function done() {
+      resolve({
+        name,
+        iterations,
+        noops,
+        count,
+        time,
+        ticks: Math.round(noops / iterations * count),
+        hz: iterations / count / time * 1000,
       });
     }
 
-    await p;
-    this.print(this.logger);
-    return this.results;
-  }
-
-  private print(logger: (msg?: string) => any) {
-    logger();
-
-    this.results.map(res =>
-      logger(res.name + ": " + chalk.yellow(res.displayTime)),
-    );
-
-    this.results = this.results.sort((a, b) => {
-      if (a.time < b.time) return -1;
-      if (a.time > b.time) return 1;
-      return 0;
-    });
-
-    logger("\nFastest: " + chalk.green(this.results[0].name));
-  }
+    next();
+  });
 }
+
+export function format({ hz, name, ticks }: Result) {
+  const ops = yellow(
+    Intl !== undefined
+      ? new Intl.NumberFormat("en", {
+          maximumFractionDigits: 3,
+          useGrouping: true,
+        }).format(hz)
+      : "" + hz,
+  );
+
+  return `${name} ${gray("x")} ${ops} ${gray("ops/s")} ${gray(
+    `(${ticks} ticks)`,
+  )}`;
+}
+
+// tslint:disable no-console
+export const bench = (name: string, fn: () => void) =>
+  benchmark(name, fn).then(res => console.log(format(res)));
