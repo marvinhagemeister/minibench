@@ -1,13 +1,13 @@
-import chalk from "chalk";
+import { gray, yellow } from "@marvinh/minichalk";
 import { performance } from "perf_hooks";
 
-function loop(fn: () => void, time: number) {
+async function loop(fn: () => void, time: number) {
   const start = performance.now();
   let count = 0;
 
   while (performance.now() - start < time) {
     count++;
-    fn();
+    await fn();
   }
 
   return count;
@@ -23,7 +23,7 @@ export interface Result {
   hz: number;
 }
 
-export function benchmark(name: string, fn: () => void): Promise<Result> {
+export async function benchmark(name: string, fn: () => void): Promise<Result> {
   let a = 0;
   function noop() {
     try {
@@ -34,31 +34,29 @@ export function benchmark(name: string, fn: () => void): Promise<Result> {
   }
 
   // warmup
-  for (let i = 100; i--; ) noop(), fn();
+  for (let i = 100; i--; ) noop(), await fn();
 
-  let count = 2;
-  let time = 500;
+  const count = 2;
+  const time = 500;
   let passes = 0;
-  let noops = loop(noop, time);
+  const noops = await loop(noop, time);
   let iterations = 0;
 
-  return new Promise(resolve => {
-    function next() {
-      iterations += loop(fn, time);
+  return new Promise<Result>(resolve => {
+    async function next() {
+      iterations += await loop(fn, time);
       setTimeout(++passes === count ? done : next, 10);
     }
 
     function done() {
-      let ticks = Math.round(noops / iterations * count);
-      let hz = iterations / count / time * 1000;
       resolve({
         name,
         iterations,
         noops,
         count,
         time,
-        ticks,
-        hz,
+        ticks: Math.round(noops / iterations * count),
+        hz: iterations / count / time * 1000,
       });
     }
 
@@ -67,18 +65,20 @@ export function benchmark(name: string, fn: () => void): Promise<Result> {
 }
 
 export function format({ hz, name, ticks }: Result) {
-  const ops = chalk.yellow(
-    new Intl.NumberFormat("en", {
-      maximumFractionDigits: 3,
-      useGrouping: true,
-    }).format(hz),
+  const ops = yellow(
+    Intl !== undefined
+      ? new Intl.NumberFormat("en", {
+          maximumFractionDigits: 3,
+          useGrouping: true,
+        }).format(hz)
+      : "" + hz,
   );
 
-  const gray = chalk.gray;
   return `${name} ${gray("x")} ${ops} ${gray("ops/s")} ${gray(
     `(${ticks} ticks)`,
   )}`;
 }
 
+// tslint:disable no-console
 export const bench = (name: string, fn: () => void) =>
   benchmark(name, fn).then(res => console.log(format(res)));

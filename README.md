@@ -1,6 +1,7 @@
-# MiniBench
+# minibench
 
-Minimal benchmark library for nodejs.
+Minimal benchmark library that supports sync and async benchmarks. Works in node
+and in the browser.
 
 ## Installation
 
@@ -9,20 +10,18 @@ Minimal benchmark library for nodejs.
 npm install --dev  minibench
 
 # yarn
-yarn add --dev minibench
+yarn add -D minibench
 ```
 
 ## Usage
 
 ```js
-// optional options
-const options {
-  iterations: 1000,
-  logger: console.log,
-};
-
-new Benchmark(options) // options are optional
-  .add("test1", () => foo())
-  .add("test2", () => bar())
-  .run()
+async function perf() {
+  await bench("foo", () => foo());
+  await bench("bar", () => bar());
+}
+perf();
+// logs:
+// foo x 6,926 ops/s (258 ticks)
+// bar x 5,128 ops/s (343 ticks)
 ```
