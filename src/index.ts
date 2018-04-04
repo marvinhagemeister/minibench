@@ -38,30 +38,18 @@ export async function benchmark(name: string, fn: () => void): Promise<Result> {
 
   const count = 2;
   const time = 500;
-  let passes = 0;
   const noops = await loop(noop, time);
+
+  let passes = 0;
   let iterations = 0;
+  while (++passes !== count) {
+    iterations += await loop(fn, time);
+  }
 
-  return new Promise<Result>(resolve => {
-    async function next() {
-      iterations += await loop(fn, time);
-      setTimeout(++passes === count ? done : next, 10);
-    }
+  const ticks = Math.round(noops / iterations * count);
+  const hz = iterations / count / time * 1000;
 
-    function done() {
-      resolve({
-        name,
-        iterations,
-        noops,
-        count,
-        time,
-        ticks: Math.round(noops / iterations * count),
-        hz: iterations / count / time * 1000,
-      });
-    }
-
-    next();
-  });
+  return { name, iterations, noops, count, time, ticks, hz };
 }
 
 export function format({ hz, name, ticks }: Result) {
