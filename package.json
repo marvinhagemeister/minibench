@@ -22,7 +22,7 @@
     "prepublishOnly": "npm run lint && npm t && npm run build"
   },
   "dependencies": {
-    "@marvinh/minichalk": "^1.0.0",
+    "@marvinh/minichalk": "^1.0.1",
     "chalk": "^2.3.2",
     "performance-now": "^2.1.0"
   },

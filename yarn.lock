@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@marvinh/minichalk@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@marvinh/minichalk/-/minichalk-1.0.0.tgz#9f3052f20f5b7ca817de86b9ca1f8c3d32b9a1b7"
+"@marvinh/minichalk@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@marvinh/minichalk/-/minichalk-1.0.1.tgz#000d8d0f767b252d3b0c7b2c58888f197c588f31"
 
 "@types/acorn@^4.0.3":
   version "4.0.3"
