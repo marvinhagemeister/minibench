@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2
+
+* Fix exception in browsers due to incorrect `supportsColor` check in
+  `@marvinh/minichalk`
+
 ## 1.0.1
 
 * Refactor internals to be even smaller
