@@ -24,14 +24,7 @@ export interface Result {
 }
 
 export async function benchmark(name: string, fn: () => void): Promise<Result> {
-  let a = 0;
-  function noop() {
-    try {
-      a++;
-    } finally {
-      a += Math.random();
-    }
-  }
+  const noop = () => undefined;
 
   // warmup
   for (let i = 100; i--; ) noop(), await fn();
