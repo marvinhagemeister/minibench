@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1
+
+* Refactor internals to be even smaller
+* remove double scheduling with `setTimeout`
+* remove noop dead code, is jitted away by `v8` immediately anyway
+
 ## 1.0.0
 
 * Complete rewrite
