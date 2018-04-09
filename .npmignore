@@ -7,5 +7,6 @@ src/
 .npmignore
 .travis.yml
 .gitignore
-tsconfig.json
+tsconfig.*
+rollup.config.js
 tslint.json
