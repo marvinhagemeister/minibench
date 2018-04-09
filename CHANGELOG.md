@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1
+
+* Remove unused dependencies
+
 ## 1.1.0
 
 * Split `sync` and `async` measurements internally. This greatly improves measurements for the former, where Promise scheduling would skew the results slightly.
