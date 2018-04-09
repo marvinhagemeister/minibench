@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0
+
+* Split `sync` and `async` measurements internally. This greatly improves measurements for the former, where Promise scheduling would skew the results slightly.
+* Refactor internals that there is no need to subtract noops anymore
+* Automatically calculate the optimal sample size
+* Add FAQ section to Readme
+
 ## 1.0.2
 
 * Fix exception in browsers due to incorrect `supportsColor` check in
